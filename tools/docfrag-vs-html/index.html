@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <script src="http://yandex.st/jquery/2.0.3/jquery.min.js"></script>
+    <script src="../../lib/bt.js"></script>
+    <script>
+        var json = {
+            block: 'foo',
+            content: [
+                {
+                    block: 'input',
+                    val: '123'
+                },
+                {
+                    block: 'button',
+                    text: 'Boo!'
+                },
+                'A-a-a-a!'
+            ]
+        };
+
+        function main() {
+            var bt = new BT();
+
+            bt.match('foo', function(ctx) {
+                ctx.setContent(ctx.getParam('content'));
+            });
+
+            bt.match('button', function(ctx) {
+                ctx.setTag('button');
+                ctx.setAttr('role', 'button');
+                ctx.setContent(ctx.getParam('text'));
+            });
+
+            bt.match('input', function(ctx) {
+                ctx.setTag('input');
+                ctx.setAttr('type', 'text');
+                ctx.setAttr('value', ctx.getParam('val'));
+            });
+
+            var start = window.performance.now();
+            var $B = $(document.body);
+            for (var i = 0; i < 1e3; i++) {
+                document.body.appendChild(bt.apply(json, true));
+                //document.body.innerHTML += bt.apply(json);
+                //$(bt.apply(json)).appendTo($B);
+            }
+            console.log((window.performance.now() - start).toFixed(2));
+        }
+
+        window.onload = function () {
+            window.onload = null;
+            main();
+        };
+    </script>
+</body>
+</html>
